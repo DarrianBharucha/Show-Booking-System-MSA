@@ -1,6 +1,5 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.dto.UserDTO;
 import com.example.userservice.model.User;
 import com.example.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,11 +19,6 @@ public class UserController {
     public UserController(UserService userService, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
-    }
-
-    @GetMapping("/test")
-    public String testEndpoint() {
-        return "User Service is Running";
     }
 
     @PostMapping("/register")
@@ -46,8 +38,12 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<User> getUser(@PathVariable String username) {
-        User user = userService.getUserByUsername(username); // No Optional<User> now
+        User user = userService.getUserByUsername(username);
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/test")
+    public String testEndpoint() {
+        return "User Service is Running";
+    }
 }
