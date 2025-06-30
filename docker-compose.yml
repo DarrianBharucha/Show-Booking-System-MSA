@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+
+  eureka-server:
+    build: .
+    image: eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - msaproject-network
+
+  api-gateway:
+    build: .
+    image: api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - msaproject-network
+
+  user-service:
+    build: .
+    image: user-service:latest
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/users_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - msaproject-network
+
+  show-service:
+    build: .
+    image: show-service:latest
+    container_name: show-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/shows_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - msaproject-network
+
+  booking-service:
+    build: .
+    image: booking-service:latest
+    container_name: booking-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/booking_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - msaproject-network
+
+  payment-service:
+    build: .
+    image: payment-service:latest
+    container_name: payment-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/payment_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - msaproject-network
+
+networks:
+  msaproject-network:
